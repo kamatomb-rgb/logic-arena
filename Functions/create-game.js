@@ -3,7 +3,7 @@
 // POST { mode: 'team'|'bracket', teamAName, teamBName } -> { gameId }
 // ============================================================================
 
-const { getAdminClient, jsonResponse, parseBody, generateGameCode } = require('./_lib/supabaseAdmin');
+const { getAdminClient, jsonResponse, parseBody, generateGameCode } = require('./supabaseAdmin');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'Method not allowed' });
