@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Logic Arena — use your logic!</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       1) SPLASH
+       ============================================================ -->
+  <section class="screen is-active" id="screen-splash">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="splash-mark">🧠</div>
+      <h1 class="splash-title">Logic Arena</h1>
+      <p class="splash-tagline">use your logic!</p>
+      <p class="muted center-text">
+        Kuis logika real-time buat main rame-rame — satu layar utama, semua orang main dari HP masing-masing.
+      </p>
+      <button class="btn btn-primary btn-block" id="btn-lets-play">Let's Play</button>
+      <button class="btn btn-ghost btn-block" id="btn-im-player">Aku pemain, mau gabung ke game</button>
+    </div>
+    <footer class="hint muted center-text">Dibuat dengan 🧠 di atas Netlify + Supabase Realtime + Gemini</footer>
+  </section>
+
+  <!-- ============================================================
+       2) HOST SETUP
+       ============================================================ -->
+  <section class="screen" id="screen-setup">
+    <div class="wrap wrap-narrow">
+      <div class="brand"><span class="brand-dot"></span> Setup Host</div>
+      <div class="card stack">
+        <h2>Atur permainanmu</h2>
+
+        <div class="field">
+          <label>Nama Grup A</label>
+          <input id="input-team-a" type="text" maxlength="18" value="Tim Gold" />
+        </div>
+        <div class="field">
+          <label>Nama Grup B</label>
+          <input id="input-team-b" type="text" maxlength="18" value="Tim Coffee" />
+        </div>
+
+        <div class="field">
+          <label>Mode Permainan</label>
+          <div class="mode-grid">
+            <button class="mode-card is-selected" id="mode-team" data-mode="team">
+              <span class="mode-emoji">🤝</span>
+              <span class="mode-name">Tim</span>
+              <span class="mode-desc">2 tim adu skor bareng, kumulatif tiap soal.</span>
+            </button>
+            <button class="mode-card" id="mode-bracket" data-mode="bracket">
+              <span class="mode-emoji">🏆</span>
+              <span class="mode-name">Play-off Bracket</span>
+              <span class="mode-desc">1v1 gugur tiap babak sampai ada 1 juara.</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="btn-create-game">Buat Game</button>
+        <p class="muted" id="setup-error" style="display:none; color:#EF476F;"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3) LOBBY
+       ============================================================ -->
+  <section class="screen" id="screen-lobby">
+    <div class="wrap">
+      <div class="brand"><span class="brand-dot"></span> Lobby</div>
+      <p class="muted center-text">Scan salah satu QR di bawah buat gabung. Kode game juga bisa diketik manual di <strong>/player.html</strong></p>
+      <div class="game-code" id="lobby-code">------</div>
+
+      <div class="qr-grid">
+        <div class="qr-card">
+          <span class="qr-team-label team-a" id="qr-label-a">Tim Gold</span>
+          <img id="qr-img-a" alt="QR join grup A" />
+          <span class="muted" id="qr-url-a" style="font-size:0.72rem; word-break:break-all;"></span>
+        </div>
+        <div class="qr-card">
+          <span class="qr-team-label team-b" id="qr-label-b">Tim Coffee</span>
+          <img id="qr-img-b" alt="QR join grup B" />
+          <span class="muted" id="qr-url-b" style="font-size:0.72rem; word-break:break-all;"></span>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <div class="row-between">
+          <h3>Pemain gabung</h3>
+          <span class="pill-tag" id="lobby-count">0 pemain</span>
+        </div>
+        <div class="player-roster" id="lobby-roster">
+          <span class="muted">Belum ada yang gabung. Ayo scan QR-nya! 👀</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="btn-start-game" disabled>Mulai Game (minimal 2 pemain)</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4) GENERATING QUESTIONS
+       ============================================================ -->
+  <section class="screen" id="screen-generating">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="spinner"></div>
+      <h2 class="center-text">Gemini lagi nyari tren terbaru & meracik soal logika...</h2>
+      <p class="muted center-text">Google Search grounding aktif — sekali jalan aja, biasanya kurang dari 15 detik.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5) QUESTION (host big screen)
+       ============================================================ -->
+  <section class="screen" id="screen-question">
+    <div class="wrap">
+      <div class="row-between">
+        <span class="pill-tag" id="q-progress">Soal 1/5</span>
+        <span class="pill-tag" id="q-answered-count">0 terjawab</span>
+      </div>
+      <div class="timer-track"><div class="timer-fill" id="q-timer-fill" style="width:100%"></div></div>
+      <div class="question-card">
+        <div class="question-eyebrow">Pilih jawaban paling logis di HP kamu</div>
+        <div class="question-text" id="q-text">Memuat soal...</div>
+      </div>
+      <div class="option-grid" id="q-options-host">
+        <!-- filled by host.js, host screen shows options as reference, not clickable -->
+      </div>
+      <button class="btn btn-dark btn-block" id="btn-reveal">Tampilkan Jawaban</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6) REVEAL
+       ============================================================ -->
+  <section class="screen" id="screen-reveal">
+    <div class="wrap">
+      <span class="pill-tag">Jawaban Benar</span>
+      <div class="question-card">
+        <div class="question-text" id="reveal-answer-text">-</div>
+      </div>
+      <div class="team-battle" id="reveal-team-battle" style="display:none;">
+        <div class="team-score-block team-a-block">
+          <div class="team-name" id="reveal-team-a-name">Tim Gold</div>
+          <div class="team-points" id="reveal-team-a-score">0</div>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="team-score-block team-b-block">
+          <div class="team-name" id="reveal-team-b-name">Tim Coffee</div>
+          <div class="team-points" id="reveal-team-b-score">0</div>
+        </div>
+      </div>
+      <div class="leaderboard-list" id="reveal-top-players"></div>
+      <button class="btn btn-primary btn-block" id="btn-next-question">Soal Berikutnya</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7) LEADERBOARD (after quiz questions, before bracket / end)
+       ============================================================ -->
+  <section class="screen" id="screen-leaderboard">
+    <div class="wrap">
+      <span class="pill-tag">Papan Skor</span>
+      <h2 class="center-text">Ronde soal selesai!</h2>
+      <div class="team-battle" id="lb-team-battle" style="display:none;">
+        <div class="team-score-block team-a-block">
+          <div class="team-name" id="lb-team-a-name">Tim Gold</div>
+          <div class="team-points" id="lb-team-a-score">0</div>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="team-score-block team-b-block">
+          <div class="team-name" id="lb-team-b-name">Tim Coffee</div>
+          <div class="team-points" id="lb-team-b-score">0</div>
+        </div>
+      </div>
+      <div class="leaderboard-list" id="lb-list"></div>
+      <button class="btn btn-primary btn-block" id="btn-generate-bracket" style="display:none;">Buat Bracket Play-off 🏆</button>
+      <button class="btn btn-dark btn-block" id="btn-end-game">Selesai</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8) BRACKET
+       ============================================================ -->
+  <section class="screen" id="screen-bracket">
+    <div class="wrap">
+      <span class="pill-tag" id="bracket-round-label">Babak 1</span>
+      <div class="bracket-scroll">
+        <div class="bracket-rounds" id="bracket-rounds"></div>
+      </div>
+
+      <div class="question-card" id="bracket-question-card" style="display:none;">
+        <div class="question-eyebrow">Pertanyaan penentu babak ini</div>
+        <div class="question-text" id="bracket-q-text">-</div>
+      </div>
+      <div class="timer-track" id="bracket-timer-track" style="display:none;"><div class="timer-fill" id="bracket-timer-fill" style="width:100%"></div></div>
+
+      <button class="btn btn-primary btn-block" id="btn-bracket-action">Mulai Babak Ini</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9) CHAMPION / END
+       ============================================================ -->
+  <section class="screen" id="screen-end">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="confetti-emoji">🎉</div>
+      <h1 class="center-text" id="end-title">Game selesai!</h1>
+      <div class="card stack" id="end-summary"></div>
+      <button class="btn btn-primary btn-block" id="btn-play-again">Main Lagi</button>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/config.js"></script>
+  <script src="/app.js"></script>
+  <script src="/host.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Logic Arena — Controller</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       JOIN
+       ============================================================ -->
+  <section class="screen is-active" id="screen-join">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="splash-mark" style="width:76px;height:76px;font-size:36px;">🧠</div>
+      <h2 class="center-text">Gabung ke Logic Arena</h2>
+
+      <div class="card stack">
+        <div class="field">
+          <label>Kode Game</label>
+          <input id="input-game-code" type="text" maxlength="6" placeholder="Contoh: KX7F2" style="text-transform:uppercase; letter-spacing:0.1em; text-align:center;" />
+        </div>
+        <div class="field">
+          <label>Nama Kamu</label>
+          <input id="input-player-name" type="text" maxlength="16" placeholder="Nama panggilan" />
+        </div>
+        <div class="field" id="group-field">
+          <label>Kamu masuk grup</label>
+          <div class="row">
+            <span class="qr-team-label team-a" id="group-badge">Grup A</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="btn-join">Gabung Sekarang</button>
+        <p class="muted" id="join-error" style="display:none; color:#EF476F;"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WAITING (lobby / between questions / spectating)
+       ============================================================ -->
+  <section class="screen" id="screen-waiting">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="spinner"></div>
+      <h2 class="center-text" id="waiting-title">Menunggu host mulai...</h2>
+      <p class="muted center-text" id="waiting-sub">Lihat layar utama buat ikutin jalannya game.</p>
+      <div class="card center-text" id="waiting-score-card">
+        <div class="muted">Skor kamu</div>
+        <div class="team-points" id="waiting-score">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       QUESTION (player answers here)
+       ============================================================ -->
+  <section class="screen" id="screen-question">
+    <div class="wrap">
+      <div class="row-between">
+        <span class="pill-tag" id="pq-progress">Soal 1/5</span>
+        <span class="pill-tag" id="pq-score">Skor: 0</span>
+      </div>
+      <div class="timer-track"><div class="timer-fill" id="pq-timer-fill" style="width:100%"></div></div>
+      <p class="center-text muted" id="pq-question-preview">Lihat layar utama untuk teks soalnya, lalu tap jawabanmu di sini.</p>
+      <div class="option-grid" id="pq-options"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERED (submitted, waiting for reveal)
+       ============================================================ -->
+  <section class="screen" id="screen-answered">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="spinner"></div>
+      <h2 class="center-text">Jawaban terkirim!</h2>
+      <p class="muted center-text">Nunggu host nampilin jawaban yang benar di layar utama...</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       REVEAL / FEEDBACK
+       ============================================================ -->
+  <section class="screen" id="screen-feedback">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="confetti-emoji" id="feedback-emoji">✅</div>
+      <h2 class="center-text" id="feedback-title">Benar!</h2>
+      <p class="muted center-text" id="feedback-points">+0 poin</p>
+      <div class="card center-text">
+        <div class="muted">Total skor kamu</div>
+        <div class="team-points" id="feedback-score">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       BRACKET MATCH RESULT
+       ============================================================ -->
+  <section class="screen" id="screen-bracket-result">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="confetti-emoji" id="bracket-result-emoji">🏆</div>
+      <h2 class="center-text" id="bracket-result-title">Kamu menang babak ini!</h2>
+      <p class="muted center-text" id="bracket-result-sub">Lanjut nunggu babak berikutnya.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GAME OVER
+       ============================================================ -->
+  <section class="screen" id="screen-over">
+    <div class="wrap wrap-narrow" style="justify-content:center; flex:1;">
+      <div class="confetti-emoji">🎉</div>
+      <h2 class="center-text" id="over-title">Game selesai!</h2>
+      <p class="muted center-text" id="over-sub">Makasih udah main. Lihat layar utama buat hasil lengkapnya.</p>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/config.js"></script>
+  <script src="/app.js"></script>
+  <script src="/player.js"></script>
+</body>
+</html>
