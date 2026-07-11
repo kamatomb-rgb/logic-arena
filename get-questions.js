@@ -15,7 +15,7 @@
 // keeps the game playable even if Gemini or the search grounding fails.
 // ============================================================================
 
-const { getAdminClient, jsonResponse, parseBody } = require('./_lib/supabaseAdmin');
+const { getAdminClient, jsonResponse, parseBody } = require('./supabaseAdmin');
 
 const QUESTION_COUNT = 5;
 
