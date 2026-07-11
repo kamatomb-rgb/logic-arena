@@ -9,7 +9,7 @@
 // host screen (live "answered" counter) and to the player's own score chip.
 // ============================================================================
 
-const { getAdminClient, jsonResponse, parseBody } = require('./_lib/supabaseAdmin');
+const { getAdminClient, jsonResponse, parseBody } = require('./supabaseAdmin');
 
 const BASE_POINTS = 500;
 const SPEED_BONUS = 500;
