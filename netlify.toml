@@ -1,34 +1,11 @@
-# ==============================================================================
-# LOGIC ARENA — netlify.toml
-# Single-project monorepo config: static frontend in /public, serverless
-# backend in /netlify/functions. No build step needed — deploy as-is.
-# ==============================================================================
-
 [build]
-  publish = "public"
-  functions = "netlify/functions"
-  # No build command: /public is served as-is (plain HTML/CSS/JS, no bundler).
+  functions = "functions"
 
 [functions]
   node_bundler = "esbuild"
 
-# Friendlier public paths: the browser calls /api/create-game, /api/join-game,
-# etc. instead of the raw /.netlify/functions/create-game path.
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
   force = true
-
-# ------------------------------------------------------------------------------
-# Environment variables (set these in Netlify dashboard, NOT in this file):
-#   Site settings → Environment variables → Add a variable
-#
-#   GEMINI_API_KEY              your Google AI Studio / Gemini API key
-#   SUPABASE_URL                your Supabase project URL (Project Settings → API)
-#   SUPABASE_SERVICE_ROLE_KEY   your Supabase service_role (secret) key — NEVER
-#                                the anon key, and never expose this to the browser
-#
-# The public/config.js file separately holds the PUBLIC Supabase URL + anon
-# key that the browser is allowed to see — that one ships in the repo.
-# ------------------------------------------------------------------------------
