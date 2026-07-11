@@ -15,8 +15,8 @@
 // becomes, via the Realtime subscription in app.js.
 // ============================================================================
 
-const { getAdminClient, jsonResponse, parseBody } = require('./_lib/supabaseAdmin');
-const { buildFirstRound, buildNextRound } = require('./_lib/bracket');
+const { getAdminClient, jsonResponse, parseBody } = require('./supabaseAdmin');
+const { buildFirstRound, buildNextRound } = require('./bracket');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'Method not allowed' });
